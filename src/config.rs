@@ -1,4 +1,4 @@
-config.rsuse anyhow::{anyhow, Context, Result};
+use anyhow::{anyhow, Context, Result};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
