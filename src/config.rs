@@ -119,7 +119,10 @@ fn write_template(path: &Path) -> Result<()> {
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent)?;
     }
-    let template = r#"# ask config — set a default_provider and fill in api_key or api_key_env.
+    let template = r#"# ask config — pick a default_provider, then for each provider set
+# EITHER `api_key` (plaintext key, not recommended) OR `api_key_env`
+# (the NAME of the env var that holds the key, e.g. "OPENAI_API_KEY").
+# If both are set, `api_key` wins.
 default_provider = "kimi"
 
 [providers.anthropic]

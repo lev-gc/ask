@@ -99,7 +99,10 @@ model = "gpt-4o-mini"
 ```
 
 - `kind` must be `anthropic`, `gemini`, `openai`, or `copilot`. For custom OpenAI-compatible interfaces (local Ollama, vLLM, other clouds), use `kind = "openai"` and change the `base_url`.
-- Key resolution priority: `api_key` (plaintext, not recommended) > `api_key_env` environment variable.
+- API key field — pick **one** per provider:
+  - `api_key` — the literal key as a string (plaintext on disk, not recommended; the config file is auto-chmod'd to 0600).
+  - `api_key_env` — the **name of the environment variable** that holds the key (e.g. `"OPENAI_API_KEY"`). `ask` calls `std::env::var(<that name>)` at runtime; do **not** put the key itself here.
+  - If both are set, `api_key` wins.
 - Provider priority: `--provider` > `$ASK_PROVIDER` > `default_provider`.
 - Model override: `--model` > `model` inside the provider config.
 
