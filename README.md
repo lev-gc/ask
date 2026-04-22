@@ -16,7 +16,7 @@ Check disk usage in human-readable format.
 
 - **Fast**: Cold start < 10ms, time to first byte depends only on model TTFT.
 - **Minimalist**: Outputs only the command + a one-line explanation, no fluff.
-- **Multi-provider**: Support for OpenAI / Anthropic / Kimi / DeepSeek / GitHub Copilot, easily configurable.
+- **Multi-provider**: Support for Anthropic / Gemini / OpenAI / Kimi / DeepSeek / GitHub Copilot, easily configurable.
 - **Environment-aware**: Probes distribution, shell, sudo, and tool availability on demand, ensuring commands fit your system perfectly.
 - **Side-effect free**: Never executes automatically, just prints. Optional keypress to copy to clipboard.
 
@@ -62,6 +62,18 @@ Default path: `~/.config/ask/config.toml` (permissions auto-set to 0600; throws 
 ```toml
 default_provider = "kimi"
 
+[providers.anthropic]
+kind = "anthropic"
+base_url = "https://api.anthropic.com/v1"
+api_key_env = "ANTHROPIC_API_KEY"
+model = "claude-haiku-4-5-20251001"
+
+[providers.gemini]
+kind = "gemini"
+base_url = "https://generativelanguage.googleapis.com/v1beta"
+api_key_env = "GEMINI_API_KEY"
+model = "gemini-2.5-flash"
+
 [providers.openai]
 kind = "openai"
 base_url = "https://api.openai.com/v1"
@@ -80,18 +92,13 @@ base_url = "https://api.deepseek.com/v1"
 api_key_env = "DEEPSEEK_API_KEY"
 model = "deepseek-chat"
 
-[providers.anthropic]
-kind = "anthropic"
-base_url = "https://api.anthropic.com/v1"
-api_key_env = "ANTHROPIC_API_KEY"
-model = "claude-haiku-4-5-20251001"
-
 [providers.copilot]
 kind = "copilot"
 model = "gpt-4o-mini"
+
 ```
 
-- `kind` must be `openai`, `anthropic`, or `copilot`. For custom OpenAI-compatible interfaces (local Ollama, vLLM, other clouds), use `kind = "openai"` and change the `base_url`.
+- `kind` must be `anthropic`, `gemini`, `openai`, or `copilot`. For custom OpenAI-compatible interfaces (local Ollama, vLLM, other clouds), use `kind = "openai"` and change the `base_url`.
 - Key resolution priority: `api_key` (plaintext, not recommended) > `api_key_env` environment variable.
 - Provider priority: `--provider` > `$ASK_PROVIDER` > `default_provider`.
 - Model override: `--model` > `model` inside the provider config.
@@ -125,8 +132,9 @@ ask/
     ├── interact.rs         # Post-run single-key copy (crossterm + arboard)
     └── provider/
         ├── mod.rs          # Provider trait + build()
-        ├── openai.rs       # OpenAI chat/completions (Kimi/DeepSeek/Custom)
         ├── anthropic.rs    # Anthropic /v1/messages
+        ├── gemini.rs       # Google Gemini generateContent / streamGenerateContent
+        ├── openai.rs       # OpenAI chat/completions (Kimi/DeepSeek/Custom)
         └── copilot.rs      # GH Copilot token exchange + reuse openai.rs
 ```
 

@@ -3,6 +3,7 @@ use futures_util::stream::BoxStream;
 
 pub mod anthropic;
 pub mod copilot;
+pub mod gemini;
 pub mod openai;
 
 pub struct ChatRequest<'a> {
@@ -22,6 +23,7 @@ pub fn build(cfg: &crate::config::ProviderConfig) -> Result<Box<dyn Provider>> {
         "openai" => Ok(Box::new(openai::OpenAI::from_config(cfg)?)),
         "anthropic" => Ok(Box::new(anthropic::Anthropic::from_config(cfg)?)),
         "copilot" => Ok(Box::new(copilot::Copilot::from_config(cfg)?)),
+        "gemini" => Ok(Box::new(gemini::Gemini::from_config(cfg)?)),
         other => anyhow::bail!("unknown provider kind: {}", other),
     }
 }

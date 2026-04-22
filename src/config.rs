@@ -11,7 +11,7 @@ pub struct RootConfig {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProviderConfig {
-    /// openai | anthropic | copilot
+    /// openai | anthropic | copilot | gemini
     #[serde(default = "default_kind")]
     pub kind: String,
     pub base_url: Option<String>,
@@ -116,6 +116,18 @@ fn write_template(path: &Path) -> Result<()> {
     let template = r#"# ask config — set a default_provider and fill in api_key or api_key_env.
 default_provider = "kimi"
 
+[providers.anthropic]
+kind = "anthropic"
+base_url = "https://api.anthropic.com/v1"
+api_key_env = "ANTHROPIC_API_KEY"
+model = "claude-haiku-4-5-20251001"
+
+[providers.gemini]
+kind = "gemini"
+base_url = "https://generativelanguage.googleapis.com/v1beta"
+api_key_env = "GEMINI_API_KEY"
+model = "gemini-2.5-flash"
+
 [providers.openai]
 kind = "openai"
 base_url = "https://api.openai.com/v1"
@@ -133,12 +145,6 @@ kind = "openai"
 base_url = "https://api.deepseek.com/v1"
 api_key_env = "DEEPSEEK_API_KEY"
 model = "deepseek-chat"
-
-[providers.anthropic]
-kind = "anthropic"
-base_url = "https://api.anthropic.com/v1"
-api_key_env = "ANTHROPIC_API_KEY"
-model = "claude-haiku-4-5-20251001"
 
 [providers.copilot]
 kind = "copilot"
