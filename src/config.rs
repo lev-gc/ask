@@ -45,9 +45,15 @@ impl ProviderConfig {
 }
 
 pub fn default_path() -> Result<PathBuf> {
-    let dirs = directories::ProjectDirs::from("", "", "ask")
-        .ok_or_else(|| anyhow!("cannot determine config directory"))?;
-    Ok(dirs.config_dir().join("config.toml"))
+    let base = match std::env::var("XDG_CONFIG_HOME") {
+        Ok(v) if !v.is_empty() => PathBuf::from(v),
+        _ => {
+            let home = std::env::var("HOME")
+                .map_err(|_| anyhow!("cannot determine config directory: HOME not set"))?;
+            PathBuf::from(home).join(".config")
+        }
+    };
+    Ok(base.join("ask").join("config.toml"))
 }
 
 pub fn load(explicit: Option<&Path>) -> Result<(RootConfig, PathBuf)> {

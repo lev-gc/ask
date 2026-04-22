@@ -92,17 +92,34 @@ pub fn format_for_prompt(info: &EnvInfo) -> String {
 }
 
 fn read_os_release(info: &mut EnvInfo) {
-    let text = match std::fs::read_to_string("/etc/os-release") {
-        Ok(t) => t,
-        Err(_) => return,
-    };
-    for line in text.lines() {
-        if let Some(v) = line.strip_prefix("ID=") {
-            info.distro = Some(strip_quotes(v).to_string());
-        } else if let Some(v) = line.strip_prefix("VERSION_ID=") {
-            info.distro_version = Some(strip_quotes(v).to_string());
+    if let Ok(text) = std::fs::read_to_string("/etc/os-release") {
+        for line in text.lines() {
+            if let Some(v) = line.strip_prefix("ID=") {
+                info.distro = Some(strip_quotes(v).to_string());
+            } else if let Some(v) = line.strip_prefix("VERSION_ID=") {
+                info.distro_version = Some(strip_quotes(v).to_string());
+            }
+        }
+        return;
+    }
+    if cfg!(target_os = "macos") {
+        info.distro = Some("macos".to_string());
+        if let Ok(text) =
+            std::fs::read_to_string("/System/Library/CoreServices/SystemVersion.plist")
+        {
+            if let Some(v) = parse_plist_value(&text, "ProductVersion") {
+                info.distro_version = Some(v);
+            }
         }
     }
+}
+
+fn parse_plist_value(text: &str, key: &str) -> Option<String> {
+    let needle = format!("<key>{}</key>", key);
+    let (_, after) = text.split_once(needle.as_str())?;
+    let (_, after_open) = after.split_once("<string>")?;
+    let (val, _) = after_open.split_once("</string>")?;
+    Some(val.trim().to_string())
 }
 
 fn strip_quotes(s: &str) -> &str {
@@ -111,9 +128,45 @@ fn strip_quotes(s: &str) -> &str {
 }
 
 fn kernel_release() -> Option<String> {
-    std::fs::read_to_string("/proc/sys/kernel/osrelease")
+    if let Ok(s) = std::fs::read_to_string("/proc/sys/kernel/osrelease") {
+        return Some(s.trim().to_string());
+    }
+    #[cfg(target_os = "macos")]
+    {
+        return uname_release();
+    }
+    #[allow(unreachable_code)]
+    None
+}
+
+#[cfg(target_os = "macos")]
+fn uname_release() -> Option<String> {
+    // macOS utsname has 5 fixed-size char arrays of _SYS_NAMELEN (256) bytes each.
+    #[repr(C)]
+    struct Utsname {
+        sysname: [u8; 256],
+        nodename: [u8; 256],
+        release: [u8; 256],
+        version: [u8; 256],
+        machine: [u8; 256],
+    }
+    extern "C" {
+        fn uname(buf: *mut Utsname) -> i32;
+    }
+    let mut u = Utsname {
+        sysname: [0; 256],
+        nodename: [0; 256],
+        release: [0; 256],
+        version: [0; 256],
+        machine: [0; 256],
+    };
+    if unsafe { uname(&mut u as *mut _) } != 0 {
+        return None;
+    }
+    let end = u.release.iter().position(|&b| b == 0).unwrap_or(u.release.len());
+    std::str::from_utf8(&u.release[..end])
         .ok()
-        .map(|s| s.trim().to_string())
+        .map(|s| s.to_string())
 }
 
 fn in_git_repo() -> bool {

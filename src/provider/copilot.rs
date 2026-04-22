@@ -26,9 +26,15 @@ struct CachedToken {
 }
 
 fn cache_path() -> Result<PathBuf> {
-    let dirs = directories::ProjectDirs::from("", "", "ask")
-        .ok_or_else(|| anyhow!("cannot resolve cache dir"))?;
-    let dir = dirs.cache_dir().to_path_buf();
+    let base = match std::env::var("XDG_CACHE_HOME") {
+        Ok(v) if !v.is_empty() => PathBuf::from(v),
+        _ => {
+            let home = std::env::var("HOME")
+                .map_err(|_| anyhow!("cannot resolve cache dir: HOME not set"))?;
+            PathBuf::from(home).join(".cache")
+        }
+    };
+    let dir = base.join("ask");
     std::fs::create_dir_all(&dir)?;
     Ok(dir.join("copilot_token.json"))
 }
