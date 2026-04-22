@@ -22,7 +22,7 @@ fn main() {
 fn run() -> Result<()> {
     let cli = cli::Cli::parse();
     if cli.question.is_empty() && std::io::stdin().is_terminal() {
-        eprintln!("usage: ask [OPTIONS] <question>\n\ntry: ask 查看当前磁盘占用");
+        eprintln!("usage: ask [OPTIONS] <question>\n\ntry: ask check disk usage");
         std::process::exit(2);
     }
 
