@@ -1,3 +1,5 @@
+// For format details, see https://aka.ms/devcontainer.json.
+// For other images, see https://github.com/devcontainers/images/tree/main/src/
 {
   "name": "ask",
   "image": "mcr.microsoft.com/devcontainers/universal:2",
