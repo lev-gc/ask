@@ -56,24 +56,26 @@ pub fn default_path() -> Result<PathBuf> {
     Ok(base.join("ask").join("config.toml"))
 }
 
-pub fn load(explicit: Option<&Path>) -> Result<(RootConfig, PathBuf)> {
+pub enum Loaded {
+    Existing(RootConfig, PathBuf),
+    TemplateCreated(PathBuf),
+}
+
+pub fn load(explicit: Option<&Path>) -> Result<Loaded> {
     let path = match explicit {
         Some(p) => p.to_path_buf(),
         None => default_path()?,
     };
     if !path.exists() {
         write_template(&path)?;
-        return Err(anyhow!(
-            "no config found — wrote template to {}. edit it and set an API key (or the matching env var), then run again.",
-            path.display()
-        ));
+        return Ok(Loaded::TemplateCreated(path));
     }
     check_permissions(&path);
     let text = std::fs::read_to_string(&path)
         .with_context(|| format!("reading config {}", path.display()))?;
     let cfg: RootConfig =
         toml::from_str(&text).with_context(|| format!("parsing config {}", path.display()))?;
-    Ok((cfg, path))
+    Ok(Loaded::Existing(cfg, path))
 }
 
 fn check_permissions(path: &Path) {

@@ -40,7 +40,23 @@ fn run() -> Result<()> {
     let env_block = env_probe::format_for_prompt(&env_info);
     let user_msg = prompt::build_user_message(&env_block, stdin_text.as_deref(), &question);
 
-    let (cfg, _path) = config::load(cli.config.as_deref())?;
+    let (cfg, _path) = match config::load(cli.config.as_deref())? {
+        config::Loaded::Existing(cfg, path) => (cfg, path),
+        config::Loaded::TemplateCreated(path) => {
+            eprintln!("Welcome to ask! Looks like this is your first run.");
+            eprintln!();
+            eprintln!("A starter config has been created at:");
+            eprintln!("    {}", path.display());
+            eprintln!();
+            eprintln!("Open it in your editor and either:");
+            eprintln!("  - set `api_key = \"...\"` for your chosen provider, or");
+            eprintln!("  - export the environment variable named in `api_key_env`");
+            eprintln!("    (e.g. `export OPENAI_API_KEY=sk-...`).");
+            eprintln!();
+            eprintln!("Then run `ask` again.");
+            return Ok(());
+        }
+    };
     let (_name, provider_cfg) = config::resolve_provider(&cfg, cli.provider.as_deref())?;
     let model = cli
         .model
