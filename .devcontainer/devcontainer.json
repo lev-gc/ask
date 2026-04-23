@@ -1,0 +1,16 @@
+{
+  "name": "ask",
+  "image": "mcr.microsoft.com/devcontainers/universal:noble",
+  "remoteUser": "root",
+  "features": {
+    "ghcr.io/devcontainers/features/rust:1": {
+      "version": "latest",
+      "profile": "default",
+      "targets": "x86_64-unknown-redox,x86_64-unknown-uefi",
+      "components": "rust-analyzer,rust-src,rustfmt,clippy"
+    },
+    "ghcr.io/devcontainers-extra/features/claude-code:2": {
+      "version": "latest"
+    }
+  }
+}
