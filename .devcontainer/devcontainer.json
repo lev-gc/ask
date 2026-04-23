@@ -1,6 +1,6 @@
 {
   "name": "ask",
-  "image": "mcr.microsoft.com/devcontainers/universal:noble",
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
   "remoteUser": "root",
   "features": {
     "ghcr.io/devcontainers/features/rust:1": {
