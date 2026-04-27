@@ -1,6 +1,6 @@
 # ask
 
-Fast AI-powered Linux command assistant. Describe what you want to do; `ask` prints the right command(s) with a one-line explanation, tuned to your system — it does **not** execute anything.
+Fast AI-powered shell command assistant for Linux/macOS. Describe what you want to do; `ask` prints the right command(s) with a one-line explanation, tuned to your system — it does **not** execute anything.
 
 ```sh
 $ ask check disk usage
@@ -17,7 +17,7 @@ Check disk usage in human-readable format.
 - **Fast**: Cold start < 10ms, time to first byte depends only on model TTFT.
 - **Minimalist**: Outputs only the command + a one-line explanation, no fluff.
 - **Multi-provider**: Support for Anthropic / Gemini / OpenAI / Kimi / DeepSeek / GitHub Copilot, easily configurable.
-- **Environment-aware**: Probes distribution, shell, sudo, and tool availability on demand, ensuring commands fit your system perfectly.
+- **Environment-aware**: Probes OS (Linux distro or macOS), shell, sudo, and tool availability on demand, ensuring commands fit your system perfectly.
 - **Side-effect free**: Never executes automatically, just prints. Optional keypress to copy to clipboard.
 
 On first run, `ask` writes a template to `~/.config/ask/config.toml`. Edit it to set your default provider and API key (or the corresponding environment variable).
