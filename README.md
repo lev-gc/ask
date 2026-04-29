@@ -22,6 +22,14 @@ Check disk usage in human-readable format.
 
 On first run, `ask` writes a template to `~/.config/ask/config.toml`. Edit it to set your default provider and API key (or the corresponding environment variable).
 
+## Installation
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/lev-gc/ask/main/install.sh | sh
+```
+
+By default it installs to `/usr/local/bin` (if writable) or `~/.local/bin`. Override with `ASK_INSTALL_DIR=/path sh`.
+
 ## Usage
 
 ```bash
