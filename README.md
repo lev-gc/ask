@@ -3,7 +3,7 @@
 Fast AI-powered shell command assistant for Linux/macOS. Describe what you want to do; `ask` prints the right command(s) with a one-line explanation, tuned to your system — it does **not** execute anything.
 
 ```sh
-$ ask check disk usage
+> ask check disk usage
 $ df -h
 Check disk usage in human-readable format.
 

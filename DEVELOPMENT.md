@@ -44,7 +44,7 @@ ask/
 **`prompt.rs`** — Strict `SYSTEM` constraints ensure outputs match `$ cmd\n<explanation>` repeatedly, enabling stateless stream parsing in `render.rs`.
 **`stream.rs`** — Generic `sse_events()` taking `Stream<Bytes>` -> `Stream<SseEvent>`.
 **`render.rs`** — Incremental buffer rendering. `$ ` lines formatted in bright cyan, others dimmed. Captures `first_cmd`. ANSI formats enabled only for TTYs.
-**`interact.rs`** — Single-keypress collection via `crossterm`. Copies to clipboard with `arboard`.
+**`interact.rs`** — Single-keypress collection via `crossterm`. Clipboard copy via OSC 52 escape sequence (`\x1b]52;c;<base64>\x07`) — works over SSH / containers / Codespaces without a display server. Inline base64 encoder (~25 LOC) avoids a dependency.
 **`provider/*`** — Independent API formatters. `copilot` intelligently delegates down to `openai`.
 
 ## Adding a New Provider
