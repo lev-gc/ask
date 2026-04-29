@@ -2,7 +2,7 @@
 name = "ask"
 version = "0.1.0"
 edition = "2021"
-description = "Fast AI-powered Linux command assistant"
+description = "Fast AI-powered shell command assistant for Linux/macOS"
 license = "MIT"
 
 [[bin]]
